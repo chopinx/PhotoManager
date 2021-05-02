@@ -9,10 +9,13 @@ from PIL import Image
 import baidu_map
 
 
-def all_photo_path(root_dir):
+def all_photo_path(root_dir, formats=["*"]):
     path_list = []
     for root, dirs, files in os.walk(root_dir):
         for file in files:
+            if "*" not in formats and file.split(".")[-1].lower() not in formats:
+                print("unknown format, filename=%s" % file)
+                continue
             os.path.join(root, file)
             path_list.append(os.path.join(root, file))
 
@@ -51,7 +54,7 @@ class MyImage(object):
                     2].den * lng_ref)
             lat_ref = 1 if self.tags['GPS GPSLatitudeRef'].values == "N" else -1
             lat = baidu_map.GPS(D=self.tags['GPS GPSLatitude'].values[0].num / self.tags['GPS GPSLatitude'].values[
-                                    0].den * lat_ref,
+                0].den * lat_ref,
                                 M=self.tags['GPS GPSLatitude'].values[1].num / self.tags['GPS GPSLatitude'].values[
                                     1].den * lat_ref,
                                 S=self.tags['GPS GPSLatitude'].values[2].num / self.tags['GPS GPSLatitude'].values[
